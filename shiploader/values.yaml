@@ -1,0 +1,6 @@
+app: teste-shipload
+replicas: 1
+image: nginx/nginx-ingress
+tag: 1.11.1-alpine
+port: 8080
+url: shipload.webera.com
