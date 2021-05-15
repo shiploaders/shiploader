@@ -1,4 +1,4 @@
-name: Golang Shiploader
+name: Golang
 on: [push]
 jobs:
   Build:
