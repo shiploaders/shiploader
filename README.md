@@ -1,7 +1,7 @@
 # shiploader
 ## _Not your average ship loader_
 
-[![.github/workflows/ci.yml](https://github.com/Marcus1911/shiploader/actions/workflows/ci.yml/badge.svg)](https://github.com/Marcus1911/shiploader/actions/workflows/ci.yml)
+[![Build](https://github.com/Marcus1911/shiploader/actions/workflows/ci.yml/badge.svg)](https://github.com/Marcus1911/shiploader/actions/workflows/ci.yml)
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/Marcus1911/shiploader/main)
 
 
