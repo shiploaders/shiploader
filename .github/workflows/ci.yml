@@ -1,0 +1,25 @@
+name: Python package
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: golang
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-python@v2
+      with:
+        # Py version must be 3
+        #python-version: '3.x'
+        # Defaults to x64
+        architecture: 'x64'
+
+
+    # Test
+
+    - name: check golang
+      run: |
+        go
