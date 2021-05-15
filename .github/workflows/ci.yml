@@ -3,10 +3,11 @@ on: [push]
 jobs:
   Build:
     runs-on: ubuntu-latest
+    env:
+      CODECOV_TOKEN='29bdced7-ae9e-4d5c-a414-6f47b31364ea'
     steps:
       - run: GO_FILES=$(find . -iname '*.go' -type f) # All the .go files, excluding .github
       - run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           go get -u golang.org/x/lint/golint
           golint -set_exit_status ./...
-  
