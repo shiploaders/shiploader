@@ -1,7 +1,7 @@
 # shiploader
 ## _Not your average ship loader_
 
-![example workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg) #after design the ci, make it available (travis has some problems with shields)
+[![example workflow](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)] #after design the ci, make it available (travis has some problems with shields)
 
 Discribe components.
 
