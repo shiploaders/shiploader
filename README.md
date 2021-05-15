@@ -2,7 +2,8 @@
 ## _Not your average ship loader_
 
 [![GitHub Build](https://github.com/Marcus1911/shiploader/workflows/CI%20Build/badge.svg)](https://github.com/Marcus1911/shiploader/actions) #after design the ci, make it available (travis has some problems with shields)
-[Branch State](https://img.shields.io/github/checks-status/Marcus1911/shiploader/main)
+
+![GitHub branch checks state](https://img.shields.io/github/checks-status/Marcus1911/shiploader/main)
 
 
 Discribe components.
