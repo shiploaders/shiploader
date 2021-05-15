@@ -2,6 +2,7 @@
 ## _Not your average ship loader_
 
 [![.github/workflows/ci.yml](https://github.com/Marcus1911/shiploader/actions/workflows/ci.yml/badge.svg)](https://github.com/Marcus1911/shiploader/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Marcus1911/shiploader/branch/main/graph/badge.svg?token=DDYNT8YXJM)](https://codecov.io/gh/Marcus1911/shiploader)
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/Marcus1911/shiploader/main)
 
 
