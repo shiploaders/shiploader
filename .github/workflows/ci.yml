@@ -4,4 +4,4 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - run: - GO_FILES=$(find . -iname '*.go' -type f)
+      - run: GO_FILES=$(find . -iname '*.go' -type f | grep -v /.github) # All the .go files, excluding .github
