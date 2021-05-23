@@ -13,6 +13,7 @@ Thumbs.db
 .nvm-version
 .vscode
 .python-version
+./k8s/*
 
 # Test binary, built with `go test -c`
 *.test
