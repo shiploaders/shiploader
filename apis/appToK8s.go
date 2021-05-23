@@ -6,19 +6,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type Apps struct {
-	Apps []App `yaml:"apps" validate:"required"`
-}
-
-type App struct {
-	Name      string `yaml:"name" validate:"required"`
-	Namespace string `yaml:"namespace" validate:"required"`
-	Image     string `yaml:"image" validate:"required"`
-	Replicas  int32  `yaml:"replicas"`
-	Port      int32  `yaml:"port" validate:"required"`
-}
-
-
 func (a *App) ToDeployment() *appsv1.Deployment {
 	return &appsv1.Deployment{
 		TypeMeta: v1.TypeMeta{
