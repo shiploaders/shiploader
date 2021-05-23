@@ -17,6 +17,7 @@ type Params struct {
 	Image   string
 	Port    string
 	Replica string
+	Path    string
 }
 
 // Will return the command line ready to be executed
@@ -41,6 +42,10 @@ func Generate() *cli.App {
 		cli.StringFlag{
 			Name:  "port",
 			Value: "8080",
+		},
+		cli.StringFlag{
+			Name:  "path",
+			Value: "/home/webera/Projetos/shiploader/k8s/",
 		},
 	}
 
@@ -68,6 +73,7 @@ func GenerateYamlByTemplate(c *cli.Context) (err error) {
 		Image:   c.String("image"),
 		Port:    c.String("port"),
 		Replica: c.String("replica"),
+		Path:    c.String("path"),
 	}
 
 	var templates *template.Template
@@ -106,18 +112,18 @@ func CreateYamlFile(params *Params, templates *template.Template, typeTmpl strin
 	s1 := templates.Lookup(typeTmpl + ".tmpl")
 	s1.ExecuteTemplate(os.Stdout, typeTmpl+".yml", params)
 
-	outputPath := filepath.Join("./k8s/", typeTmpl+".yml")
+	outputPath := filepath.Join(params.Path, typeTmpl+".yml")
 
 	f, err := os.Create(outputPath)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	defer f.Close()
 
 	err = s1.Execute(f, params)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	return nil

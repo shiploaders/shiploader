@@ -5,7 +5,7 @@ metadata:
   name: node-app 
 spec:
   ports:
-    - port: 8080
+    - port: 8082
       name: http
   selector:
     app: node-app
