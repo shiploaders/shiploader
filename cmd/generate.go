@@ -2,129 +2,122 @@ package command
 
 import (
 	"fmt"
+	"github.com/go-playground/validator"
+	"github.com/urfave/cli"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
-	"text/template"
-
-	"github.com/urfave/cli"
+	"shiploader/apis"
+	"sigs.k8s.io/yaml"
+	"sync"
 )
 
-type Params struct {
-	AppName string
-	Image   string
-	Port    string
-	Replica string
-	Path    string
-}
+var (
+	validate = validator.New()
+)
+
+const (
+	DeploymentFileName = "deployment.yaml"
+	ServiceFileName = "service.yaml"
+)
 
 // Will return the command line ready to be executed
 func Generate() *cli.App {
 	app := cli.NewApp()
 	app.Name = "Shiploader"
-	app.Usage = "Let's you query Image, Replica, Port!"
+	app.Usage = "TODO: Add usage here"
+	currentDir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	flags := []cli.Flag{
 		cli.StringFlag{
-			Name:  "name",
-			Value: "app",
+			Name:  "config",
+			Usage: "A config file that defines your desired state of your apps",
+			Required: true,
+			Value: "config.yaml",
 		},
 		cli.StringFlag{
-			Name:  "replica",
-			Value: "1",
-		},
-		cli.StringFlag{
-			Name:  "image",
-			Value: "gcr.io/webera/base",
-		},
-		cli.StringFlag{
-			Name:  "port",
-			Value: "8080",
-		},
-		cli.StringFlag{
-			Name:  "path",
-			Value: "/home/webera/Projetos/shiploader/k8s/",
+			Name:  "dest",
+			Usage: fmt.Sprintf("The destination directory where generated files will be saved to."),
+			Value: currentDir,
 		},
 	}
 
 	// we create our commands
 	app.Commands = []cli.Command{
+		// TODO: perhaps we create a command that does "generate + check-in-git + deploy to a cluster(take inputs from the config + kubeconfig)"
 		{
 			Name:      "generate",
 			ShortName: "g",
 			Usage:     "Generate files yaml",
 			Flags:     flags,
-			Action:    GenerateYamlByTemplate,
+			Action:    GenerateYamlForApps,
 		},
 	}
 
 	return app
-
 }
 
-func GenerateYamlByTemplate(c *cli.Context) (err error) {
-
-	filePathTemplates := "./templates"
-
-	params := Params{
-		AppName: c.String("name"),
-		Image:   c.String("image"),
-		Port:    c.String("port"),
-		Replica: c.String("replica"),
-		Path:    c.String("path"),
-	}
-
-	var templates *template.Template
-	var allFiles []string
-	files, err := ioutil.ReadDir(filePathTemplates)
+func GenerateYamlForApps(c *cli.Context) error {
+	allApps, err := configToApps(c.String("config"))
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("Failed to parse config file [%v]: %v", c.String("config"),err)
 	}
 
-	for _, file := range files {
-		filename := file.Name()
-		fullPath := filePathTemplates + "/" + filename
-		if strings.HasSuffix(filename, ".tmpl") {
-			allFiles = append(allFiles, fullPath)
-		}
+	var wg sync.WaitGroup
+	wg.Add(len(allApps.Apps))
+	for _, app := range allApps.Apps {
+		go func(a apis.App) {
+			defer wg.Done()
+			if errValidatingAppFields := validate.Struct(a); errValidatingAppFields != nil {
+				log.Fatal(errValidatingAppFields)
+			}
+			// run generators
+			if err := generateDeployment(a, c.String("dest")); err != nil {
+				log.Fatal(err)
+			}
+			if err := generateSvc(a, c.String("dest")); err != nil {
+				log.Fatal(err)
+			}
+		}(app)
 	}
-
-	templates, err = template.ParseFiles(allFiles...)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	if err := CreateYamlFile(&params, templates, "deployment"); err != nil {
-		log.Fatal(err)
-	}
-
-	if err := CreateYamlFile(&params, templates, "service"); err != nil {
-		log.Fatal(err)
-	}
-
+	wg.Wait()
 	return nil
 }
 
-func CreateYamlFile(params *Params, templates *template.Template, typeTmpl string) (err error) {
-
-	s1 := templates.Lookup(typeTmpl + ".tmpl")
-	s1.ExecuteTemplate(os.Stdout, typeTmpl+".yml", params)
-
-	outputPath := filepath.Join(params.Path, typeTmpl+".yml")
-
-	f, err := os.Create(outputPath)
-	if err != nil {
-		log.Fatal(err)
+// TODO: -- everything under this TODO should go in a separate pkg and should be importable by the above func
+func generateDeployment(app apis.App, dest string) error {
+	fileName := filepath.Join(dest, fmt.Sprintf("%s-%s-%s", app.Namespace, app.Name, DeploymentFileName))
+	rawDeploy, errMarshallingToDeploy := yaml.Marshal(app.ToDeployment())
+	if errMarshallingToDeploy != nil {
+		return errMarshallingToDeploy
 	}
+	return ioutil.WriteFile(fileName, rawDeploy, os.ModePerm)
+}
 
-	defer f.Close()
-
-	err = s1.Execute(f, params)
-	if err != nil {
-		log.Fatal(err)
+func generateSvc(app apis.App, dest string) error {
+	fileName := filepath.Join(dest, fmt.Sprintf("%s-%s-%s", app.Namespace, app.Name, ServiceFileName))
+	rawSvc, errMarshallingToSvc := yaml.Marshal(app.ToService())
+	if errMarshallingToSvc != nil {
+		return errMarshallingToSvc
 	}
+	return ioutil.WriteFile(fileName, rawSvc, os.ModePerm)
+}
 
-	return nil
+func configToApps(configFile string) (*apis.Apps, error) {
+	apps := &apis.Apps{}
+	rawConfigFile, errReading := os.ReadFile(configFile)
+	if errReading != nil {
+		return nil, errReading
+	}
+	if err := yaml.Unmarshal(rawConfigFile, apps); err != nil {
+		return nil, err
+	}
+	if errValidating := validate.Struct(apps); errValidating != nil {
+		return nil, errValidating
+	}
+	return apps, nil
 }
