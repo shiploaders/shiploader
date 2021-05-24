@@ -1,0 +1,21 @@
+apps:
+- name: foo
+  namespace: dev
+  image: foo
+  port: 80
+  replicas: 1
+- name: foo
+  namespace: qa
+  image: foo
+  port: 80
+  replicas: 1
+- name: foo
+  namespace: staging
+  image: foo
+  port: 80
+  replicas: 1
+- name: foo
+  namespace: prod
+  image: foo
+  port: 80
+  replicas: 2

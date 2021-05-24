@@ -18,6 +18,11 @@ Discribe components.
 - release-name1 or v 1.xx
 
 
+## Dev workflow
+
+### Generate manifests 
+- Run `go run main.go g --name node-app --image gcr.io/webera/node --port 8080 --replica 1 --path /home/webera/Projetos/shiploader/k8s/` to generate all manifests k8s.
+
 ## FAQ
 
 Include FAQs as :
