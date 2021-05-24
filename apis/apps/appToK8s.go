@@ -1,4 +1,4 @@
-package apis
+package apps
 
 import (
 	appsv1 "k8s.io/api/apps/v1"

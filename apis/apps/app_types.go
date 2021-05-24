@@ -1,4 +1,4 @@
-package apis
+package apps
 
 type Apps struct {
 	Apps []App `yaml:"apps" validate:"required"`
