@@ -2,18 +2,20 @@ package generators
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 	"shiploader/apis/apps"
 	"sigs.k8s.io/yaml"
 )
 
-func GenerateDeployment(app apps.App, dest, deployFileName string) error {
-	fileName := filepath.Join(dest, fmt.Sprintf("%s-%s-%s", app.Namespace, app.Name, deployFileName))
+const (
+	DeploymentFileName = "deployment.yaml"
+)
+
+func GenerateDeployment(app apps.App, dest string, w WriterInterface) error {
+	fileName := filepath.Join(dest, fmt.Sprintf("%s-%s-%s", app.Namespace, app.Name, DeploymentFileName))
 	rawDeploy, errMarshallingToDeploy := yaml.Marshal(app.ToDeployment())
 	if errMarshallingToDeploy != nil {
 		return errMarshallingToDeploy
 	}
-	return ioutil.WriteFile(fileName, rawDeploy, os.ModePerm)
+	return w.WriteFile(fileName, rawDeploy, 0666)
 }

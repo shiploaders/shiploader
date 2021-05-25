@@ -67,24 +67,27 @@ func GenerateYamlForApps(c *cli.Context) error {
 	}
 	destDir := c.String("dest")
 	if _, err := os.Stat(destDir); os.IsNotExist(err) {
-		if errMakingDir := os.MkdirAll(destDir, os.ModeDir); errMakingDir != nil {
+		if errMakingDir := os.MkdirAll(destDir, 0777); errMakingDir != nil {
 			return errMakingDir
 		}
 	}
 
 	var wg sync.WaitGroup
+	wr := generators.Writer{}
 	wg.Add(len(allApps.Apps))
 	for _, app := range allApps.Apps {
+
+		if errValidatingAppFields := validate.Struct(app); errValidatingAppFields != nil {
+			log.Fatal(errValidatingAppFields)
+		}
+
 		go func(a apps.App) {
 			defer wg.Done()
-			if errValidatingAppFields := validate.Struct(a); errValidatingAppFields != nil {
-				log.Fatal(errValidatingAppFields)
-			}
 			// run generators
-			if err := generators.GenerateDeployment(a, destDir, DeploymentFileName); err != nil {
+			if err := generators.GenerateDeployment(a, destDir, &wr); err != nil {
 				log.Fatal(err)
 			}
-			if err := generators.GenerateSvc(a, destDir, ServiceFileName); err != nil {
+			if err := generators.GenerateSvc(a, destDir, &wr); err != nil {
 				log.Fatal(err)
 			}
 		}(app)
