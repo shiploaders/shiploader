@@ -65,6 +65,12 @@ func GenerateYamlForApps(c *cli.Context) error {
 	if err != nil {
 		log.Fatalf("Failed to parse config file [%v]: %v", c.String("config"),err)
 	}
+	destDir := c.String("dest")
+	if _, err := os.Stat(destDir); os.IsNotExist(err) {
+		if errMakingDir := os.MkdirAll(destDir, os.ModeDir); errMakingDir != nil {
+			return errMakingDir
+		}
+	}
 
 	var wg sync.WaitGroup
 	wg.Add(len(allApps.Apps))
@@ -75,10 +81,10 @@ func GenerateYamlForApps(c *cli.Context) error {
 				log.Fatal(errValidatingAppFields)
 			}
 			// run generators
-			if err := generators.GenerateDeployment(a, c.String("dest"), DeploymentFileName); err != nil {
+			if err := generators.GenerateDeployment(a, destDir, DeploymentFileName); err != nil {
 				log.Fatal(err)
 			}
-			if err := generators.GenerateSvc(a, c.String("dest"), ServiceFileName); err != nil {
+			if err := generators.GenerateSvc(a, destDir, ServiceFileName); err != nil {
 				log.Fatal(err)
 			}
 		}(app)
