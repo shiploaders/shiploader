@@ -12,12 +12,6 @@ import (
 	"sync"
 )
 
-
-
-const (
-	DeploymentFileName = "deployment.yaml"
-	ServiceFileName = "service.yaml"
-)
 var (
 	validate = validator.New()
 )
