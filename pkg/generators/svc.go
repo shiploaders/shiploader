@@ -2,18 +2,20 @@ package generators
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 	"path/filepath"
 	"shiploader/apis/apps"
 	"sigs.k8s.io/yaml"
 )
 
-func GenerateSvc(app apps.App, dest, svcFileName string) error {
-	fileName := filepath.Join(dest, fmt.Sprintf("%s-%s-%s", app.Namespace, app.Name, svcFileName))
+const (
+	ServiceFileName = "service.yaml"
+)
+
+func GenerateSvc(app apps.App, dest string, w WriterInterface) error {
+	fileName := filepath.Join(dest, fmt.Sprintf("%s-%s-%s", app.Namespace, app.Name, ServiceFileName))
 	rawSvc, errMarshallingToSvc := yaml.Marshal(app.ToService())
 	if errMarshallingToSvc != nil {
 		return errMarshallingToSvc
 	}
-	return ioutil.WriteFile(fileName, rawSvc, os.ModePerm)
+	return w.WriteFile(fileName, rawSvc, 0666)
 }

@@ -20,8 +20,17 @@ Discribe components.
 
 ## Dev workflow
 
-### Generate manifests 
-- Run `go run main.go g --name node-app --image gcr.io/webera/node --port 8080 --replica 1 --path /home/webera/Projetos/shiploader/k8s/` to generate all manifests k8s.
+### Build
+- `go build -o shiploader main.go`
+- `chmod +x shiploader`
+
+### Run
+- Create your desired apps state in a config file (`config.yaml`)
+- Run `./shiploader generate --config config.yaml`
+
+### Tests
+- `go test ./... -coverprofile=coverage.out`
+- To view coverage in a html report: `go tool cover -html=coverage.out` 
 
 ## FAQ
 
