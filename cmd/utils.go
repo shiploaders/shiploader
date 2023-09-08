@@ -1,23 +1,39 @@
-package shiploader
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+*/
+package cmd
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/wearewebera/shiploader/pkg/shiploader"
 )
 
+// utilsCmd represents the utils command
 var utilsCmd = &cobra.Command{
-	Use:     "utils",
-	Aliases: []string{"util"},
-	Short:   "Utils is a command with multiple subcommands to perform various utility functions",
-	Args:    cobra.ExactArgs(1),
+	Use:   "utils",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		res := shiploader.Utils(args[0])
-		fmt.Println(res)
+		fmt.Println("utils called")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(utilsCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// utilsCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// utilsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

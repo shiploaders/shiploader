@@ -1,7 +1,11 @@
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import shiploader "github.com/wearewebera/shiploader/cmd"
+import "github.com/wearewebera/shiploader/cmd"
 
 func main() {
-	shiploader.Execute()
+	cmd.Execute()
 }
