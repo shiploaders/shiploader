@@ -12,10 +12,9 @@ var version = "0.0.1"
 var rootCmd = &cobra.Command{
 	Use:     "shiploader",
 	Version: version,
-	Short:   "sl - A powerful CLI to ship applications to the cloud, migrate cloud services, bootstrap your cloud infrastructure, or maintain your existing cloud infrastructure",
-	Long:    `shiploader is a powerful CLI to ship applications to the cloud, migrate cloud services, bootstrap your cloud infrastructure, or maintain your existing cloud infrastructure`,
+	Short:   "A powerful CLI to ship applications to the cloud, migrate cloud services, bootstrap your cloud infrastructure, or maintain your existing cloud infrastructure",
+	Long:    `Shiploader is a powerful CLI to ship applications to the cloud, migrate cloud services, bootstrap your cloud infrastructure, or maintain your existing cloud infrastructure.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
 	},
 }
 

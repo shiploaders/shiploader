@@ -1,3 +1,5 @@
+// path: cmd/shiploader/secrets.go
+
 package shiploader
 
 import (
